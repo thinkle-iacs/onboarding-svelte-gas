@@ -1,30 +1,51 @@
+interface Group {
+  group: string;
+  childGroups: Group[];
+}
 
 export const GoogleAppsScript = {
-  
-     getActiveUserEmail(): Promise<string> {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler((result: string) => resolve(result))
-          .withFailureHandler((error: any) => reject(error))
-          .getActiveUserEmail();
-      });
-    },
+  getActiveUserEmail(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler((result: string) => resolve(result))
+        .withFailureHandler((error: any) => reject(error))
+        .getActiveUserEmail();
+    });
+  },
 
-     testMe(number: number): Promise<number> {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler((result: number) => resolve(result))
-          .withFailureHandler((error: any) => reject(error))
-          .testMe(number);
-      });
-    },
+  lookupAccount(
+    name: string
+  ): Promise<GoogleAppsScript.AdminDirectory.Schema.User> {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(
+          (result: GoogleAppsScript.AdminDirectory.Schema.User) =>
+            resolve(result)
+        )
+        .withFailureHandler((error: any) => reject(error))
+        .lookupAccount(name);
+    });
+  },
 
-     foo(s: string): Promise<number> {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler((result: number) => resolve(result))
-          .withFailureHandler((error: any) => reject(error))
-          .foo(s);
-      });
-    }
-}
+  getGroups(userEmail: string): Promise<Group[]> {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler((result: Group[]) => resolve(result))
+        .withFailureHandler((error: any) => reject(error))
+        .getGroups(userEmail);
+    });
+  },
+
+  getSharedDrives(
+    params: any
+  ): Promise<{ items: any[]; nextPageToken: string }> {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler((result: { items: any[]; nextPageToken: string }) =>
+          resolve(result)
+        )
+        .withFailureHandler((error: any) => reject(error))
+        .getSharedDrives(params);
+    });
+  },
+};

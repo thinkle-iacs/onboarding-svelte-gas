@@ -5,8 +5,9 @@ declare namespace google.script {
       withSuccessHandler(callback: (value: any, object?: any) => void): this;
       withUserObject(object: Object): this;
       getActiveUserEmail(): void;
-  testMe(number: number): void;
-  foo(s: string): void
+  lookupAccount(name: string): void;
+  getGroups(userEmail: string): void;
+  getSharedDrives(params: any): void
   }
   const run : GoogleScriptRun;
 

@@ -1,10 +1,23 @@
-const IDX = "index.html"; // file name for svelte output
-const APPNAME = `My App`;
+const IDX = "index.html"; // file name for Svelte output
+const APPNAME = `Onboard App`;
 
 import { getAddOnEnvironment } from "./addOn";
 
 export function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile(IDX);
+  let template = HtmlService.createTemplateFromFile(IDX);
+
+  // Extract parameters from the `e` object and format them as a single string
+  let params = Object.keys(e.parameter)
+    .map((key) => `${key}=${e.parameter[key]}`)
+    .join(".");
+
+  // Construct the context string
+  let context = `${getAddOnEnvironment()}.dialog.${params}`;
+
+  // Pass the context string to the template
+  template.context = context;
+
+  return template.evaluate();
 }
 
 export function showSidebar() {
@@ -35,7 +48,7 @@ export function showDialog(title: string = APPNAME, modal = true) {
   let addOn = getAddOnEnvironment();
   let template = HtmlService.createTemplateFromFile(IDX);
   let context = `${addOn}.dialog.${modal ? "modal" : "modeless"}`;
-  template.context = template;
+  template.context = context;
   let app = getAppForAddOn(addOn);
   let html = template.evaluate();
   if (modal) {

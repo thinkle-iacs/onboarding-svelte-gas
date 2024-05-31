@@ -7,8 +7,17 @@ export default defineConfig({
   root: "./src/svelte/",
   build: {
     outDir: "../../dist",
-    emptyOutDir: true, // Ensure the output directory is empty
+    minify: false,
+    //emptyOutDir: true, // Ensure the output directory is empty
     // Inline HTML and CSS
     rollupOptions: {},
+    terserOptions: {
+      compress: false,
+      mangle: false,
+      format: {
+        beautify: true,
+        comments: true,
+      },
+    },
   },
 });

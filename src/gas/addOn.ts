@@ -19,15 +19,7 @@ export function getAddOnEnvironment():
   | "Docs"
   | "Sheets"
   | "Unknown" {
-  if (typeof SlidesApp !== "undefined" && SlidesApp.getUi()) {
-    return "Slides";
-  } else if (typeof DocumentApp !== "undefined" && DocumentApp.getUi()) {
-    return "Docs";
-  } else if (typeof SpreadsheetApp !== "undefined" && SpreadsheetApp.getUi()) {
-    return "Sheets";
-  } else {
-    return "Unknown";
-  }
+  return "Unknown";
 }
 
 export function onOpen(e: any): void {
