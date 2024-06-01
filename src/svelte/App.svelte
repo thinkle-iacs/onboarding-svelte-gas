@@ -1,4 +1,8 @@
 <script lang="ts">
+  import Error from "./Error.svelte";
+
+  import GroupsForUser from "./GroupsForUser.svelte";
+
   import GroupInfo from "./GroupInfo.svelte";
 
   import {
@@ -9,29 +13,27 @@
   import { parseContext } from "./lib/parseContext";
   import { GoogleAppsScript } from "./gasApi";
   import { onMount } from "svelte";
+  import Busy from "./Busy.svelte";
   let email;
   let contextString = `<? context ?>`;
   let context = parseContext(contextString);
+  let lookingUpUser = false;
   let username: string;
   let validUser: null | GoogleAppsScript.AdminDirectory.User;
+  let error = null;
   onMount(async () => {
     email = await GoogleAppsScript.getActiveUserEmail();
   });
   async function lookupUser() {
-    validUser = await GoogleAppsScript.lookupAccount(username);
-  }
-  let groups = [];
-  let inheritedGroups = [];
-  let groupsUser;
-  async function lookupGroups() {
-    const result = await GoogleAppsScript.getGroups(validUser.primaryEmail);
-    groupsUser = validUser.primaryEmail;
-    groups = result;
-  }
-
-  $: if (groupsUser != validUser?.primaryEmail) {
-    groups = [];
-    groupsUser = "";
+    validUser = null;
+    lookingUpUser = true;
+    error = null;
+    try {
+      validUser = await GoogleAppsScript.lookupAccount(username);
+    } catch (err) {
+      error = err;
+    }
+    lookingUpUser = false;
   }
 
   $: console.log(validUser);
@@ -46,52 +48,69 @@
       <Icon fontSize="32px" icon={account_circle.round} /><input
         type="text"
         placeholder="Enter username"
+        disabled={lookingUpUser}
         bind:value={username}
       />@innovationcharter.org
-      <button class="action" on:click={lookupUser}>Look Up</button>
+      <button
+        class="action"
+        on:click={lookupUser}
+        disabled={lookingUpUser || !username}>Look Up</button
+      >
     </div>
   </Block>
+  {#if lookingUpUser}
+    <Busy></Busy>
+  {/if}
+  <Error {error}></Error>
   {#if validUser}
     <Block>
       <div class="card">
         <div class="header">
           <h2>{validUser.name.fullName}</h2>
         </div>
-        <div class="grid">
+        <div class="flex-line">
           <img src={validUser.thumbnailPhotoUrl} alt="User Photo" />
-          <div>
-            <p>Email: {validUser.primaryEmail}</p>
-            {#if validUser.isMailboxSetup}
-              <p>Mailbox is setup</p>
+          <div class="grid">
+            <div class="label bold">Email:</div>
+            <div class="email">{validUser.primaryEmail}</div>
+
+            <div class="label bold">Account Info:</div>
+
+            <div class="account-info">
+              <div class="orgpath">{validUser.orgUnitPath}</div>
+              {#if validUser.isAdmin}
+                <div>Admin</div>
+              {/if}
+              {#if validUser.suspended}
+                <div><em>Suspended</em></div>
+              {/if}
+            </div>
+            {#if validUser.recoverEmail || validUser.recoveryPhone}
+              <div class="label bold">Recovery Info:</div>
+              <div></div>
+
+              {#if validUser.recoveryEmail}
+                <div class="label">Recovery Email:</div>
+                <div class="recovery email">{validUser.recoveryEmail}</div>
+              {/if}
+              {#if validUser.recoveryPhone}
+                <div class="label">Recovery Phone:</div>
+                <div class="recovery phone">{validUser.recoveryPhone}</div>
+              {/if}
             {/if}
-            {#if validUser.isAdmin}
-              ADMIN
-            {/if}
-            {#if validUser.recoveryEmail}
-              Recovery: {validUser.recoveryEmail}
-            {/if}
+            <div class="label bold">Timestamps</div>
+            <div></div>
+            <div class="label">Created:</div>
+            <div class="created">{validUser.creationTime}</div>
+            <div class="label">Last Login:</div>
+            <div class="last-login">
+              {validUser.lastLoginTime}
+            </div>
           </div>
         </div>
-      </div>
-    </Block>
-    <Block>
-      <h2>Groups</h2>
-      <button class="action" on:click={lookupGroups}>Lookup Groups</button>
-      {#if validUser?.primaryEmail == groupsUser}
-        <div class="group-add">
-          <label>
-            Add Group:
-            <input type="text" />
-          </label>
-          <button on:click={() => window.alert("fix me")}>Add to Group</button>
-        </div>
-      {/if}
-      <ul>
-        {#each groups as group}
-          <GroupInfo {group} top={true}></GroupInfo>
-        {/each}
-      </ul>
-    </Block>
+      </div></Block
+    >
+    <GroupsForUser user={validUser}></GroupsForUser>
   {/if}
 
   <div class="footer">
@@ -111,11 +130,23 @@
 
 <style>
   .grid {
-    display: flex;
-    gap: 8px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 4px 4px;
+    align-items: start;
+    justify-items: start;
+    margin: auto;
+  }
+
+  .label {
+    text-align: right;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .bold,
+  .bold + * {
+    margin-top: 8px;
   }
   .flex-line {
     display: flex;
@@ -124,5 +155,11 @@
   }
   img {
     border-radius: 50%;
+  }
+  .card h2 {
+    text-align: center;
+  }
+  .card img {
+    margin: auto;
   }
 </style>

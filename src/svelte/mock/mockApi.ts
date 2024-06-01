@@ -2,25 +2,88 @@ export function getActiveUserEmail(): string {
   return "thinkle@example.com";
 }
 
+function makeFirstName(letter: string): string {
+  switch (letter.toLowerCase()) {
+    case "a":
+      return "Alice";
+    case "b":
+      return "Bob";
+    case "c":
+      return "Charlie";
+    case "d":
+      return "Diana";
+    case "e":
+      return "Edward";
+    case "f":
+      return "Fiona";
+    case "g":
+      return "George";
+    case "h":
+      return "Hannah";
+    case "i":
+      return "Isaac";
+    case "j":
+      return "Julia";
+    case "k":
+      return "Kevin";
+    case "l":
+      return "Liam";
+    case "m":
+      return "Megan";
+    case "n":
+      return "Nathan";
+    case "o":
+      return "Olivia";
+    case "p":
+      return "Paul";
+    case "q":
+      return "Quincy";
+    case "r":
+      return "Rachel";
+    case "s":
+      return "Sarah";
+    case "t":
+      return "Tom";
+    case "u":
+      return "Uma";
+    case "v":
+      return "Victor";
+    case "w":
+      return "Wendy";
+    case "x":
+      return "Xander";
+    case "y":
+      return "Yvonne";
+    case "z":
+      return "Zach";
+    default:
+      return "Jonathan";
+  }
+}
+
 export function lookupAccount(
   name: string
 ): GoogleAppsScript.AdminDirectory.Schema.User {
+  if (name.length < 3) throw new Error("Name too short");
+  let first = makeFirstName(name[0]);
+  let last = name[1].toLocaleUpperCase() + name.substring(2);
+
   return {
     orgUnitPath: "/Staff/Tech",
     ipWhitelisted: false,
     creationTime: "2008-03-18T19:27:43.000Z",
     gender: { type: "male" },
     isMailboxSetup: true,
-    emails: [{ address: "thinkle@innovationcharter.org", primary: true }],
+    emails: [{ address: name + "@innovationcharter.org", primary: true }],
     archived: false,
     thumbnailPhotoUrl:
       "https://lh3.googleusercontent.com/a-/ALV-UjVqjwr4zSWu4y_u9FCb9bsUn0UFYaq4Jn5UCEBFr7RaBM1pPjmh=s96-c",
     changePasswordAtNextLogin: false,
     customerId: "C03wq9yev",
     id: "113561106451202000689",
-    recoveryEmail: "tmhinkle@gmail.com",
+    recoveryEmail: name + "@gmail.com",
     agreedToTerms: true,
-    primaryEmail: "thinkle@innovationcharter.org",
+    primaryEmail: name + "@innovationcharter.org",
     includeInGlobalAddressList: true,
     languages: [{ languageCode: "en", preference: "preferred" }],
     isEnrolledIn2Sv: true,
@@ -32,9 +95,9 @@ export function lookupAccount(
     isDelegatedAdmin: false,
     isEnforcedIn2Sv: false,
     name: {
-      fullName: "Thomas Hinkle",
-      givenName: "Thomas",
-      familyName: "Hinkle",
+      fullName: first + " " + last,
+      givenName: first,
+      familyName: last,
     },
     etag: '"1H1-aJh8nkaxx0DjOXqyf3OKql_TWhfx_bDfxancDeQ/fiaOEWfGOAd5C366cAOwh4ES1uk"',
     thumbnailPhotoEtag:
