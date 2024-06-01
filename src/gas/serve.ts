@@ -4,7 +4,7 @@ const APPNAME = `Onboard App`;
 import { getAddOnEnvironment } from "./addOn";
 
 export function doGet(e) {
-  let template = HtmlService.createTemplateFromFile(IDX);
+  let template = HtmlService.createTemplateFromFile("index");
 
   // Extract parameters from the `e` object and format them as a single string
   let params = Object.keys(e.parameter)
@@ -17,7 +17,16 @@ export function doGet(e) {
   // Pass the context string to the template
   template.context = context;
 
-  return template.evaluate();
+  // Check for the 'usethesource' parameter
+  if (e.parameter.usethesource) {
+    let htmlOutput = template.evaluate();
+    let rawHtml = htmlOutput.getContent();
+    return ContentService.createTextOutput(rawHtml).setMimeType(
+      ContentService.MimeType.TEXT
+    );
+  } else {
+    return template.evaluate();
+  }
 }
 
 export function showSidebar() {
