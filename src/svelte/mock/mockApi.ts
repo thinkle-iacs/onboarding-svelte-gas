@@ -108,40 +108,24 @@ export function lookupAccount(
 export function getGroups(userEmail: string) {
   return [
     {
-      group: "directGroup1@domain.com",
+      group: "hs-ela@innovationcharter.org",
       childGroups: [
         {
-          group: "inheritedGroup1-1@domain.com",
-          childGroups: [
-            {
-              group: "childGroup1-1-1@domain.com",
-              childGroups: [],
-            },
-            {
-              group: "childGroup1-1-2@domain.com",
-              childGroups: [],
-            },
-          ],
+          group: "ela@innovationcharter.org",
         },
         {
-          group: "inheritedGroup1-2@domain.com",
-          childGroups: [
-            {
-              group: "childGroup1-2-1@domain.com",
-              childGroups: [],
-            },
-          ],
+          group: "hs-faculty@innovationcharter.org",
         },
       ],
     },
     {
-      group: "directGroup2@domain.com",
+      group: "grade-9-advisors@innovationcharter.org",
       childGroups: [
         {
-          group: "inheritedGroup2-1@domain.com",
+          group: "hs-advisors@innovationcharter.org",
           childGroups: [
             {
-              group: "childGroup2-1-1@domain.com",
+              group: "advisors@innovationcharter.org",
               childGroups: [],
             },
           ],
@@ -212,4 +196,99 @@ export function getSharedDrives(params: any): {
       nextPageToken: "nextPageTokenString",
     };
   }
+}
+
+import type {
+  GroupInfo,
+  GroupKind,
+  CalendarInfo,
+  StaffCategory,
+  GroupChangeResult,
+} from "../../types";
+
+export function getGroupList(): GroupInfo[] {
+  return [
+    {
+      email: "hs@innovationcharter.org",
+      category: "HS",
+      kind: "School",
+    },
+    ...[
+      "ela",
+      "math",
+      "science",
+      "social-studies",
+      "student-services",
+      "wellness",
+    ].flatMap((department) => [
+      {
+        email: `hs-${department}@innovationcharter.org`,
+        category: "HS" as StaffCategory,
+        kind: "Department" as GroupKind,
+      },
+      {
+        email: `ms-${department}@innovationcharter.org`,
+        category: "MS" as StaffCategory,
+        kind: "Department" as GroupKind,
+      },
+    ]),
+    ...[5, 6, 7, 8, 9, 10, 11, 12].map((grade) => ({
+      email: `grade-${grade}-advisors@innovationcharter.org`,
+      category: grade < 9 ? "MS" : ("HS" as StaffCategory),
+      kind: "Advisory" as GroupKind,
+    })),
+  ];
+}
+
+export function getCalendarList(): CalendarInfo[] {
+  return [
+    {
+      name: "School Calendar",
+      id: "asdlfkajwer",
+      kind: "School",
+      category: "All",
+    },
+    {
+      name: "HS Staff Calendar",
+      id: "owieurwaeklraesr",
+      kind: "School",
+      category: "HS",
+    },
+  ];
+}
+
+export function getConfigSheetUrl(): string {
+  return "hello";
+}
+
+export function addToGroups(
+  userEmail: string,
+  groupEmails: string[]
+): GroupChangeResult[] {
+  return groupEmails.map((groupEmail) => {
+    return {
+      userEmail,
+      groupEmail,
+      success: true,
+      change: "add",
+    };
+  });
+}
+
+export function removeFromGroups(
+  userEmail: string,
+  groupEmails: string[]
+): GroupChangeResult[] {
+  return groupEmails.map((groupEmail) => {
+    return {
+      userEmail,
+      groupEmail,
+      success: true,
+      change: "remove",
+    };
+  });
+}
+
+export function isAuthorized(): boolean {
+  return true;
 }

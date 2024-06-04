@@ -1,51 +1,84 @@
-interface Group {
-  group: string;
-  childGroups: Group[];
-}
 
 export const GoogleAppsScript = {
-  getActiveUserEmail(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      google.script.run
-        .withSuccessHandler((result: string) => resolve(result))
-        .withFailureHandler((error: any) => reject(error))
-        .getActiveUserEmail();
-    });
-  },
+  
+     getActiveUserEmail(): Promise<string> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getActiveUserEmail();
+      });
+    },
 
-  lookupAccount(
-    name: string
-  ): Promise<GoogleAppsScript.AdminDirectory.Schema.User> {
-    return new Promise((resolve, reject) => {
-      google.script.run
-        .withSuccessHandler(
-          (result: GoogleAppsScript.AdminDirectory.Schema.User) =>
-            resolve(result)
-        )
-        .withFailureHandler((error: any) => reject(error))
-        .lookupAccount(name);
-    });
-  },
+     isAuthorized(): Promise<boolean> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: boolean) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .isAuthorized();
+      });
+    },
 
-  getGroups(userEmail: string): Promise<Group[]> {
-    return new Promise((resolve, reject) => {
-      google.script.run
-        .withSuccessHandler((result: Group[]) => resolve(result))
-        .withFailureHandler((error: any) => reject(error))
-        .getGroups(userEmail);
-    });
-  },
+     addToGroups(userEmail: string, groupEmails: string[]): Promise<GroupChangeResult[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: GroupChangeResult[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .addToGroups(userEmail, groupEmails);
+      });
+    },
 
-  getSharedDrives(
-    params: any
-  ): Promise<{ items: any[]; nextPageToken: string }> {
-    return new Promise((resolve, reject) => {
-      google.script.run
-        .withSuccessHandler((result: { items: any[]; nextPageToken: string }) =>
-          resolve(result)
-        )
-        .withFailureHandler((error: any) => reject(error))
-        .getSharedDrives(params);
-    });
-  },
-};
+     removeFromGroups(userEmail: string, groupEmails: string[]): Promise<GroupChangeResult[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: GroupChangeResult[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .removeFromGroups(userEmail, groupEmails);
+      });
+    },
+
+     getConfigSheetUrl(): Promise<string> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getConfigSheetUrl();
+      });
+    },
+
+     getCalendarList(): Promise<import("../types").CalendarInfo[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: import("../types").CalendarInfo[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getCalendarList();
+      });
+    },
+
+     getGroupList(): Promise<import("../types").GroupInfo[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: import("../types").GroupInfo[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getGroupList();
+      });
+    },
+
+     lookupAccount(name: string): Promise<GoogleAppsScript.AdminDirectory.Schema.User> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: GoogleAppsScript.AdminDirectory.Schema.User) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .lookupAccount(name);
+      });
+    },
+
+     getGroups(userEmail: any): Promise<any[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: any[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getGroups(userEmail);
+      });
+    }
+}

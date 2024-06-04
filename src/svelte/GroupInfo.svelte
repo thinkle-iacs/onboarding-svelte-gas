@@ -10,9 +10,8 @@
   let toggle = false;
   export let top = false;
 
-  async function removeFromGroup() {
-    await GoogleAppsScript.removeFromGroup(group.group);
-  }
+  export let onRemove = (email) =>
+    window.alert("Fix me - cannot remove " + email);
 </script>
 
 {#if group}
@@ -21,7 +20,7 @@
       <div class="flex-line">
         <b>{group.group}</b>
         {#if top}
-          <button on:click={removeFromGroup}>Remove user</button>
+          <button on:click={() => onRemove(group.group)}>-</button>
         {/if}
       </div>
       {#if group.childGroups}

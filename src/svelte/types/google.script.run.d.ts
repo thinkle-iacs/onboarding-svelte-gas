@@ -5,9 +5,14 @@ declare namespace google.script {
       withSuccessHandler(callback: (value: any, object?: any) => void): this;
       withUserObject(object: Object): this;
       getActiveUserEmail(): void;
+  isAuthorized(): void;
+  addToGroups(userEmail: string, groupEmails: string[]): void;
+  removeFromGroups(userEmail: string, groupEmails: string[]): void;
+  getConfigSheetUrl(): void;
+  getCalendarList(): void;
+  getGroupList(): void;
   lookupAccount(name: string): void;
-  getGroups(userEmail: string): void;
-  getSharedDrives(params: any): void
+  getGroups(userEmail: any): void
   }
   const run : GoogleScriptRun;
 
