@@ -35,7 +35,7 @@ const endIndex = scriptRegex.lastIndex;
 const beforeScript = html.substring(0, startIndex);
 const afterScript = html.substring(endIndex);
 
-const transpiledHtml = `${beforeScript}<script type="module" crossorigin>${transpiled.code}</script>${afterScript}`;
+const transpiledHtml = `${html}<script type="module" crossorigin>${transpiled.code}</script>`;
 
 // Minify the HTML
 /* const minifiedHtml = minify(transpiledHtml, {
