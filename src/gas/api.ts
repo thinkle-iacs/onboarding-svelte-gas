@@ -3,6 +3,12 @@ google.script.run here -- this will allow our type
 definition magic to work, so in your svelte side code
 you get clean autocomplete for google.script.run */
 
+export { isAuthorized } from "./config";
+
+export { addToGroups, removeFromGroups } from "./groupManagement";
+
+export { getConfigSheetUrl, getCalendarList, getGroupList } from "./config";
+
 export { lookupAccount } from "./lookupAccount";
 export { getGroups } from "./getGroups";
 
