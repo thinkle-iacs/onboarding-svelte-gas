@@ -50,3 +50,31 @@ ul ul {
 .footer a:hover {
   text-decoration: underline;
 }
+
+.blue {
+  background-color: #0033a0;
+  color: white;
+}
+.red {
+  background-color: #dc3545;
+  color: white;
+}
+
+button {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  filter: transition 300ms;
+}
+
+button:hover {
+  filter: brightness(0.8);
+}
+button:active {
+  filter: brightness(0.7);
+}
+
+input,
+select {
+  padding: 4px 8px;
+}

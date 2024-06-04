@@ -3,13 +3,12 @@
 
   import GroupsForUser from "./GroupsForUser.svelte";
 
-  import GroupInfo from "./GroupInfo.svelte";
-
   import {
     Block,
     Icon,
     account_circle,
   } from "google-apps-script-svelte-components";
+
   import { parseContext } from "./lib/parseContext";
   import { GoogleAppsScript } from "./gasApi";
   import { onMount } from "svelte";
@@ -21,7 +20,9 @@
   let username: string;
   let validUser: null | GoogleAppsScript.AdminDirectory.User;
   let error = null;
+  let authorized = false;
   onMount(async () => {
+    authorized = await GoogleAppsScript.isAuthorized();
     email = await GoogleAppsScript.getActiveUserEmail();
   });
   async function lookupUser() {
@@ -42,90 +43,110 @@
 <div class="page">
   <h1>Onboarding Form</h1>
   <p>Logged in as {email}</p>
+
   <Block>
-    <h2>User</h2>
-    <div class="flex-line">
-      <Icon fontSize="32px" icon={account_circle.round} /><input
-        type="text"
-        placeholder="Enter username"
-        disabled={lookingUpUser}
-        bind:value={username}
-      />@innovationcharter.org
-      <button
-        class="action"
-        on:click={lookupUser}
-        disabled={lookingUpUser || !username}>Look Up</button
-      >
-    </div>
-  </Block>
-  {#if lookingUpUser}
-    <Busy></Busy>
-  {/if}
-  <Error {error}></Error>
-  {#if validUser}
-    <Block>
-      <div class="card">
-        <div class="header">
-          <h2>{validUser.name.fullName}</h2>
+    {#if !authorized}
+      {#if email}
+        <div class="error">
+          <p>
+            You are not authorized to view this page. Please contact your
+            administrator.
+          </p>
         </div>
+      {:else}
+        <Busy></Busy>
+      {/if}
+    {/if}
+  </Block>
+
+  {#if authorized}
+    <Block>
+      <h2>User</h2>
+      <form on:submit|preventDefault={lookupUser}>
         <div class="flex-line">
-          <img src={validUser.thumbnailPhotoUrl} alt="User Photo" />
-          <div class="grid">
-            <div class="label bold">Email:</div>
-            <div class="email">{validUser.primaryEmail}</div>
+          <Icon fontSize="32px" icon={account_circle.round} /><input
+            type="text"
+            placeholder="Enter username"
+            disabled={lookingUpUser}
+            bind:value={username}
+          />@innovationcharter.org
+          <button
+            class="action"
+            on:click={lookupUser}
+            disabled={lookingUpUser || !username}>Look Up</button
+          >
+        </div>
+      </form>
+    </Block>
+    {#if lookingUpUser}
+      <Busy></Busy>
+    {/if}
+    <Error {error}></Error>
+    {#if validUser}
+      <Block>
+        <div class="card">
+          <div class="header">
+            <h2>{validUser.name.fullName}</h2>
+          </div>
+          <div class="flex-line">
+            <img src={validUser.thumbnailPhotoUrl} alt="User Photo" />
+            <div class="grid">
+              <div class="label bold">Email:</div>
+              <div class="email">{validUser.primaryEmail}</div>
 
-            <div class="label bold">Account Info:</div>
+              <div class="label bold">Account Info:</div>
 
-            <div class="account-info">
-              <div class="orgpath">{validUser.orgUnitPath}</div>
-              {#if validUser.isAdmin}
-                <div>Admin</div>
+              <div class="account-info">
+                <div class="orgpath">{validUser.orgUnitPath}</div>
+                {#if validUser.isAdmin}
+                  <div>Admin</div>
+                {/if}
+                {#if validUser.suspended}
+                  <div><em>Suspended</em></div>
+                {/if}
+              </div>
+              {#if validUser.recoverEmail || validUser.recoveryPhone}
+                <div class="label bold">Recovery Info:</div>
+                <div></div>
+
+                {#if validUser.recoveryEmail}
+                  <div class="label">Recovery Email:</div>
+                  <div class="recovery email">{validUser.recoveryEmail}</div>
+                {/if}
+                {#if validUser.recoveryPhone}
+                  <div class="label">Recovery Phone:</div>
+                  <div class="recovery phone">{validUser.recoveryPhone}</div>
+                {/if}
               {/if}
-              {#if validUser.suspended}
-                <div><em>Suspended</em></div>
-              {/if}
-            </div>
-            {#if validUser.recoverEmail || validUser.recoveryPhone}
-              <div class="label bold">Recovery Info:</div>
+              <div class="label bold">Timestamps</div>
               <div></div>
-
-              {#if validUser.recoveryEmail}
-                <div class="label">Recovery Email:</div>
-                <div class="recovery email">{validUser.recoveryEmail}</div>
-              {/if}
-              {#if validUser.recoveryPhone}
-                <div class="label">Recovery Phone:</div>
-                <div class="recovery phone">{validUser.recoveryPhone}</div>
-              {/if}
-            {/if}
-            <div class="label bold">Timestamps</div>
-            <div></div>
-            <div class="label">Created:</div>
-            <div class="created">{validUser.creationTime}</div>
-            <div class="label">Last Login:</div>
-            <div class="last-login">
-              {validUser.lastLoginTime}
+              <div class="label">Created:</div>
+              <div class="created">{validUser.creationTime}</div>
+              <div class="label">Last Login:</div>
+              <div class="last-login">
+                {validUser.lastLoginTime}
+              </div>
             </div>
           </div>
-        </div>
-      </div></Block
-    >
-    <GroupsForUser user={validUser}></GroupsForUser>
-  {/if}
-
-  <div class="footer">
-    <span class="gray">
-      Created with
-      <a
-        target="_blank"
-        href="https://github.com/thinkle/Google-Apps-Script-Svelte-Starter"
+        </div></Block
       >
-        Google Apps Script + Svelte Starter Kit
-      </a>
-      by
-      <a target="_blank" href="https://www.tomhinkle.net"> Tom Hinkle </a>
-    </span>
-  </div>
+      <GroupsForUser user={validUser}></GroupsForUser>
+    {/if}
+
+    <div class="footer">
+      <span class="gray">
+        Created with
+        <a
+          target="_blank"
+          href="https://github.com/thinkle/Google-Apps-Script-Svelte-Starter"
+        >
+          Google Apps Script + Svelte Starter Kit
+        </a>
+        by
+        <a target="_blank" href="https://www.tomhinkle.net"> Tom Hinkle </a>
+      </span>
+    </div>
+  {/if}
 </div>
 
 <style>
