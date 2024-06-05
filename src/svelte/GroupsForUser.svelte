@@ -1,18 +1,16 @@
-<script context="module" lang="ts">
+<script lang="ts">
   import type {
     GroupChangeResult,
     GroupInfo as GroupInfoType,
     GroupKind,
     StaffCategory,
   } from "../types";
-  let groupData: GroupInfoType[] = [];
-</script>
+  import GroupTags from "./GroupTags.svelte";
 
-<script lang="ts">
   import Busy from "./Busy.svelte";
 
   import GroupInfo from "./GroupInfo.svelte";
-
+  let groupData: GroupInfoType[] = [];
   export let user;
   let groupCategories: StaffCategory[] = [];
   let groupKinds: GroupKind[] = [];
@@ -102,27 +100,32 @@
   let queuedToRemove: string[] = []; // list of group emails we're ready to remove.
   let actionResults: GroupChangeResult[] = [];
   async function doAdd() {
+    busyAdding = true;
     let results = await GoogleAppsScript.addToGroups(
       user.primaryEmail,
       queuedToAdd
     );
     console.log("Added with results", results);
     queuedToAdd = [];
-    actionResults = [...results, actionResults];
-    setTimeout(lookupGroups, 5000);
+    busyAdding = false;
+    actionResults = [...results, ...actionResults];
   }
 
   async function doRemove() {
+    busyRemoving = true;
     let results = await GoogleAppsScript.removeFromGroups(
       user.primaryEmail,
       queuedToRemove
     );
-    actionResults = [...results, actionResults];
+    actionResults = [...results, ...actionResults];
     console.log("Removed with results", results);
     queuedToRemove = [];
-    setTimeout(lookupGroups, 5000);
+    busyRemoving = false;
   }
   $: console.log("Got cats", groupCategories, groupKinds);
+
+  let busyAdding = false;
+  let busyRemoving = false;
 </script>
 
 <Block>
@@ -155,9 +158,10 @@
                 <span>{result.error}</span>
               {/if}
               <button
+                class="close"
                 on:click={() =>
                   (actionResults = actionResults.filter((r) => r != result))}
-                >X</button
+                >&times;</button
               >
             </li>
           {/each}
@@ -176,7 +180,9 @@
     <div class="group-add-area area">
       <div class="add-interface">
         <h3>Add to Group:</h3>
-        <button on:click={getDomainGroupInfo}>Refresh</button>
+        <p>
+          <button on:click={getDomainGroupInfo}>Load Group List...</button>
+        </p>
         <label
           >School:
           <select bind:value={currentCategory}>
@@ -200,6 +206,7 @@
                 {/each}
               </select>
               <button
+                class="small"
                 on:click={() => {
                   let email = document.getElementById(
                     `${kind}-group-select`
@@ -220,23 +227,23 @@
                 placeholder="something@innovationcharter.org"
               />
             </label>
-            <button on:click={() => addToQueue(customGroupEmail)}>+</button>
+            <button class="small" on:click={() => addToQueue(customGroupEmail)}
+              >+</button
+            >
           </form>
         </div>
       </div>
       <div class="commit-interface">
         {#if queuedToAdd.length}
           <h3>Ready to add...</h3>
-          <ul>
+          <ul class="flex">
             {#each queuedToAdd as email}
               {@const groupInfo = groupData.find((g) => g.email == email)}
               <li>
                 <span class="email">{email}</span>
-                {#if groupInfo}
-                  <span class="category">{groupInfo.category}</span>
-                  <span class="kind">{groupInfo.kind}</span>
-                {/if}
+                <GroupTags {groupInfo} />
                 <button
+                  class="small"
                   on:click={() =>
                     (queuedToAdd = queuedToAdd.filter((e) => e != email))}
                   >-</button
@@ -244,7 +251,10 @@
               </li>
             {/each}
           </ul>
-          <button class="red" on:click={doAdd}
+          {#if busyAdding}
+            <Busy />
+          {/if}
+          <button class="red" on:click={doAdd} disabled={busyAdding}
             >Add {user.primaryEmail} to Groups</button
           >
         {/if}
@@ -265,6 +275,7 @@
                   queuedToRemove = [...queuedToRemove, email];
               }}
               {group}
+              {groupData}
               top={true}
             ></GroupInfo>
           {/each}
@@ -274,7 +285,7 @@
     <div class="commit-removes-area">
       {#if queuedToRemove.length}
         <h3>Ready to remove...</h3>
-        <ul>
+        <ul class="flex">
           {#each queuedToRemove as email}
             {@const groupInfo = groupData.find((g) => g.email == email)}
             <li>
@@ -284,6 +295,7 @@
                 <span class="kind">{groupInfo.kind}</span>
               {/if}
               <button
+                class="small"
                 on:click={() =>
                   (queuedToRemove = queuedToRemove.filter((e) => e != email))}
                 >-</button
@@ -291,7 +303,10 @@
             </li>
           {/each}
         </ul>
-        <button class="red" on:click={doRemove}
+        {#if busyRemoving}
+          <Busy />
+        {/if}
+        <button class="red" on:click={doRemove} disabled={busyRemoving}
           >Remove {user.primaryEmail} from Groups</button
         >
       {/if}
@@ -300,7 +315,7 @@
 </Block>
 
 <style>
-  li {
+  ul.flex li {
     width: 320px;
     display: flex;
     align-items: center;
@@ -317,7 +332,7 @@
     margin-right: 4px;
   }
   .kind {
-    background-color: #c6093b;
+    background-color: #8a8a8a;
     color: white;
     padding: 4px;
     margin-right: 4px;

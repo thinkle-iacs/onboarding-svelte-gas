@@ -1,17 +1,23 @@
 <script lang="ts">
-  import type { Drive } from "./types/keyTypes";
+  import GroupTags from "./GroupTags.svelte";
+  import type { GroupInfo as GroupInfoType } from "../types";
+
+  export let groupData: GroupInfoType[];
   interface Group {
     group: string;
     childGroups: Group[];
   }
   export let group: Group;
-  import { GoogleAppsScript } from "./gasApi";
-  import { onMount } from "svelte";
-  let toggle = false;
   export let top = false;
 
   export let onRemove = (email) =>
     window.alert("Fix me - cannot remove " + email);
+
+  let myGroupInfo: GroupInfoType | undefined = undefined;
+  $: myGroupInfo = groupData.find(
+    (groupInfo) => groupInfo.email === group.group
+  );
+  $: console.log("Got ", myGroupInfo, "by looking for", group, "in", groupData);
 </script>
 
 {#if group}
@@ -19,8 +25,10 @@
     <div class="group-container">
       <div class="flex-line">
         <b>{group.group}</b>
+        <GroupTags groupInfo={myGroupInfo} />
         {#if top}
-          <button on:click={() => onRemove(group.group)}>-</button>
+          <button class="small" on:click={() => onRemove(group.group)}>-</button
+          >
         {/if}
       </div>
       {#if group.childGroups}
@@ -31,7 +39,7 @@
             </summary>
             <ul>
               {#each group.childGroups as childGroup}
-                <svelte:self group={childGroup} />
+                <svelte:self group={childGroup} {groupData} />
               {/each}
             </ul>
           </details>

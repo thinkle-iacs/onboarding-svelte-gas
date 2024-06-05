@@ -78,3 +78,16 @@ input,
 select {
   padding: 4px 8px;
 }
+
+button.close,
+button.small {
+  border: none;
+  background-color: white;
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  padding: 0;
+  min-width: 2em;
+  display: inline-grid;
+  place-content: center;
+}
