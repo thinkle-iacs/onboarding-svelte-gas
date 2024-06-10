@@ -5,11 +5,15 @@
 </script>
 
 {#if groupInfo}
-  <span class="category">{groupInfo.category}</span>
-  <span class="kind">{groupInfo.kind}</span>
+  {#if groupInfo.category}<span class="category">{groupInfo.category}</span
+    >{/if}
+  {#if groupInfo.kind}<span class="kind">{groupInfo.kind}</span>{/if}
 {/if}
 
 <style>
+  span {
+    display: inline-block;
+  }
   .category {
     background-color: #0033a0;
     color: white;

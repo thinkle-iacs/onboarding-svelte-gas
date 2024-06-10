@@ -1,4 +1,10 @@
 <script lang="ts">
+  import EmailSender from "./EmailSender.svelte";
+
+  import CalendarsForUser from "./CalendarsForUser.svelte";
+
+  import UserInfo from "./UserInfo.svelte";
+
   import Error from "./Error.svelte";
 
   import GroupsForUser from "./GroupsForUser.svelte";
@@ -14,16 +20,31 @@
   import { onMount } from "svelte";
   import Busy from "./Busy.svelte";
   let email;
-  let contextString = `<? context ?>`;
+  let contextString = `<?= context ?>`;
   let context = parseContext(contextString);
-  let lookingUpUser = false;
   let username: string;
+  console.log("Got context string", contextString);
+  console.log("parsed:", context);
+  if (context.params) {
+    console.log("Got params", context.params);
+    if (context.params.find((p) => p[0] == "u")) {
+      let usernameParam = context.params.find((p) => p[0] == "u");
+      username = usernameParam.split("=")[1];
+    }
+  }
+  let lookingUpUser = false;
+
   let validUser: null | GoogleAppsScript.AdminDirectory.User;
+  let sheetUrl: string = "";
   let error = null;
   let authorized = false;
   onMount(async () => {
     authorized = await GoogleAppsScript.isAuthorized();
+    console.log("Got auth:", authorized);
     email = await GoogleAppsScript.getActiveUserEmail();
+    console.log("Got login email:", email);
+    sheetUrl = await GoogleAppsScript.getConfigSheetUrl();
+    console.log("Got sheet url:", sheetUrl);
   });
   async function lookupUser() {
     validUser = null;
@@ -38,15 +59,20 @@
   }
 
   $: console.log(validUser);
+  const USERINFO = 0;
+  const GROUPS = 1;
+  const CALENDARS = 2;
+  const WELCOME = 3;
+  let activeTab: number = USERINFO;
 </script>
 
 <div class="page">
   <h1>Onboarding Form</h1>
-  <p>Logged in as {email}</p>
 
   <Block>
     {#if !authorized}
       {#if email}
+        <p>Logged in as {email}</p>
         <div class="error">
           <p>
             You are not authorized to view this page. Please contact your
@@ -58,8 +84,10 @@
       {/if}
     {/if}
   </Block>
-
   {#if authorized}
+    {#if sheetUrl}
+      <a href={sheetUrl} target="_blank">Configuration and Logging Info here</a>
+    {/if}
     <Block>
       <h2>User</h2>
       <form on:submit|preventDefault={lookupUser}>
@@ -83,54 +111,42 @@
     {/if}
     <Error {error}></Error>
     {#if validUser}
-      <Block>
-        <div class="card">
-          <div class="header">
-            <h2>{validUser.name.fullName}</h2>
-          </div>
-          <div class="flex-line">
-            <img src={validUser.thumbnailPhotoUrl} alt="User Photo" />
-            <div class="grid">
-              <div class="label bold">Email:</div>
-              <div class="email">{validUser.primaryEmail}</div>
-
-              <div class="label bold">Account Info:</div>
-
-              <div class="account-info">
-                <div class="orgpath">{validUser.orgUnitPath}</div>
-                {#if validUser.isAdmin}
-                  <div>Admin</div>
-                {/if}
-                {#if validUser.suspended}
-                  <div><em>Suspended</em></div>
-                {/if}
-              </div>
-              {#if validUser.recoverEmail || validUser.recoveryPhone}
-                <div class="label bold">Recovery Info:</div>
-                <div></div>
-
-                {#if validUser.recoveryEmail}
-                  <div class="label">Recovery Email:</div>
-                  <div class="recovery email">{validUser.recoveryEmail}</div>
-                {/if}
-                {#if validUser.recoveryPhone}
-                  <div class="label">Recovery Phone:</div>
-                  <div class="recovery phone">{validUser.recoveryPhone}</div>
-                {/if}
-              {/if}
-              <div class="label bold">Timestamps</div>
-              <div></div>
-              <div class="label">Created:</div>
-              <div class="created">{validUser.creationTime}</div>
-              <div class="label">Last Login:</div>
-              <div class="last-login">
-                {validUser.lastLoginTime}
-              </div>
-            </div>
-          </div>
-        </div></Block
-      >
-      <GroupsForUser user={validUser}></GroupsForUser>
+      <div class="tabs">
+        <button
+          class="tab"
+          class:active={activeTab == USERINFO}
+          on:click={() => (activeTab = USERINFO)}
+        >
+          User Info</button
+        >
+        <button
+          class="tab"
+          class:active={activeTab == GROUPS}
+          on:click={() => (activeTab = GROUPS)}>Groups</button
+        >
+        <button
+          class="tab"
+          class:active={activeTab == CALENDARS}
+          on:click={() => (activeTab = CALENDARS)}>Calendars</button
+        >
+        <button
+          class="welcome"
+          class:active={activeTab == WELCOME}
+          on:click={() => (activeTab = WELCOME)}>Welcome Email</button
+        >
+      </div>
+      <div class:hidden={activeTab != USERINFO}>
+        <UserInfo user={validUser}></UserInfo>
+      </div>
+      <div class:hidden={activeTab != GROUPS}>
+        <GroupsForUser user={validUser}></GroupsForUser>
+      </div>
+      <div class:hidden={activeTab != CALENDARS}>
+        <CalendarsForUser user={validUser}></CalendarsForUser>
+      </div>
+      <div class:hidden={activeTab != WELCOME}>
+        <EmailSender user={validUser}></EmailSender>
+      </div>
     {/if}
 
     <div class="footer">
@@ -150,37 +166,9 @@
 </div>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 4px 4px;
-    align-items: start;
-    justify-items: start;
-    margin: auto;
-  }
-
-  .label {
-    text-align: right;
-  }
-  .bold {
-    font-weight: bold;
-  }
-  .bold,
-  .bold + * {
-    margin-top: 8px;
-  }
   .flex-line {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  img {
-    border-radius: 50%;
-  }
-  .card h2 {
-    text-align: center;
-  }
-  .card img {
-    margin: auto;
   }
 </style>

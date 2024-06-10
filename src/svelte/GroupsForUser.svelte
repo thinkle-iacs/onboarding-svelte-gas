@@ -14,20 +14,13 @@
   export let user;
   let groupCategories: StaffCategory[] = [];
   let groupKinds: GroupKind[] = [];
-  import {
-    Block,
-    Icon,
-    account_circle,
-  } from "google-apps-script-svelte-components";
-  import { parseContext } from "./lib/parseContext";
+  import { Block } from "google-apps-script-svelte-components";
+
   import { GoogleAppsScript } from "./gasApi";
   import { onMount } from "svelte";
   import Error from "./Error.svelte";
-  import { getGroupList } from "./mock/mockApi";
+  import { currentCategory } from "./store";
 
-  let contextString = `<? context ?>`;
-  let context = parseContext(contextString);
-  let username: string;
   onMount(async () => {
     if (groupData.length == 0) {
       console.log("Fetch group info (hopefully just one time)");
@@ -87,7 +80,7 @@
   }
 
   $: if (user.primaryEmail != groupsUser) setTimeout(lookupGroups, 100);
-  let currentCategory: StaffCategory = "HS";
+
   let queuedToAdd: string[] = []; // list of emails we're ready to add.
   const addToQueue = (email: string) => {
     if (!queuedToAdd.includes(email)) {
@@ -184,8 +177,8 @@
           <button on:click={getDomainGroupInfo}>Load Group List...</button>
         </p>
         <label
-          >School:
-          <select bind:value={currentCategory}>
+          >Show groups for:
+          <select bind:value={$currentCategory}>
             {#each groupCategories as category}
               <option value={category}>{category}</option>
             {/each}
@@ -194,7 +187,7 @@
         {#each groupKinds as kind}
           {@const groups = groupData.filter(
             (g) =>
-              (g.category == currentCategory || currentCategory == "All") &&
+              (g.category == $currentCategory || $currentCategory == "All") &&
               g.kind == kind
           )}
           {#if groups.length > 0}
@@ -217,7 +210,7 @@
             </div>
           {/if}
         {/each}
-        <div class="group-add">
+        <!-- <div class="group-add">
           <form on:submit|preventDefault={() => addToQueue(customGroupEmail)}>
             <label>
               Add a different group:
@@ -231,7 +224,7 @@
               >+</button
             >
           </form>
-        </div>
+        </div> -->
       </div>
       <div class="commit-interface">
         {#if queuedToAdd.length}
@@ -346,22 +339,6 @@
     text-overflow: ellipsis;
   }
 
-  .area {
-    border: 1px solid #ccc;
-    padding: 1em;
-    margin-top: 1em;
-  }
-
-  .area h3 {
-    margin: 0;
-  }
-  .area {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: start;
-    gap: 8px;
-  }
   .group-selector {
     display: flex;
     gap: 8px;
