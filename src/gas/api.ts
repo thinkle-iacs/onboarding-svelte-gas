@@ -3,6 +3,13 @@ google.script.run here -- this will allow our type
 definition magic to work, so in your svelte side code
 you get clean autocomplete for google.script.run */
 
+export { getEmailConfig } from "./config";
+
+export {
+  addReaderToCalendars,
+  addWriterToCalendars,
+} from "./calendarManagement";
+
 export { isAuthorized } from "./config";
 
 export { addToGroups, removeFromGroups } from "./groupManagement";
@@ -16,3 +23,5 @@ export function getActiveUserEmail() {
   const user = Session.getActiveUser();
   return user.getEmail();
 }
+
+export { sendEmail } from "./emailer";

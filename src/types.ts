@@ -27,3 +27,9 @@ export type GroupChangeResult = {
   error?: string;
   change: "add" | "remove";
 };
+
+export type EmailSection = {
+  header: string;
+  html: string;
+  default: boolean;
+};

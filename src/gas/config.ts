@@ -76,3 +76,17 @@ export function getCalendarList(): CalendarInfo[] {
   }
   return calendars;
 }
+import type { EmailSection } from "../types";
+export function getEmailConfig(): EmailSection[] {
+  let sheet =
+    SpreadsheetApp.openByUrl(CONFIG_SHEET_URL).getSheetByName("Email");
+  let data = sheet.getDataRange().getValues();
+  let sections: EmailSection[] = [];
+  for (let row = 1; row < data.length; row++) {
+    let header = data[row][0];
+    let html = data[row][1];
+    let isDefault = data[row][2];
+    sections.push({ header, html, default: isDefault });
+  }
+  return sections;
+}
