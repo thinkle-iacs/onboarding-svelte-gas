@@ -355,3 +355,28 @@ export function sendEmail() {
     lots: "of stuff",
   };
 }
+
+export function getOUs(): string[] {
+  return ["/Staff/Teachers", "/Staff/"];
+}
+
+export function getOrganizations(): string[] {
+  return ["HS", "MS", "Whole School"];
+}
+
+export function getTitles(): string[] {
+  return ["Teacher", "Admin", "Nurse"]; // TODO: Replace with mock return value of type string[]
+}
+
+export function createUser(user: any): void {
+  user.id = "a0w9834alksdjfasdf" + Math.random() * 100;
+  return user;
+}
+
+export function updateUser(user: any): void {
+  return user;
+}
+
+export function getDepartments(): string[] {
+  return ["Science", "ELA", "Student Services", "Health", "Athletics"];
+}

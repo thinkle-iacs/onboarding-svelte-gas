@@ -10,6 +10,60 @@ export const GoogleAppsScript = {
       });
     },
 
+     getOUs(): Promise<string[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getOUs();
+      });
+    },
+
+     getDepartments(): Promise<string[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getDepartments();
+      });
+    },
+
+     getOrganizations(): Promise<string[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getOrganizations();
+      });
+    },
+
+     getTitles(): Promise<string[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: string[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getTitles();
+      });
+    },
+
+     createUser(user: any): Promise<void> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: void) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .createUser(user);
+      });
+    },
+
+     updateUser(user: any): Promise<void> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: void) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .updateUser(user);
+      });
+    },
+
      getEmailConfig(): Promise<import("../types").EmailSection[]> {
       return new Promise((resolve, reject) => {
         google.script.run
@@ -109,10 +163,10 @@ export const GoogleAppsScript = {
       });
     },
 
-     sendEmail(email: string, subject: string, body: string, cc: string): Promise<void> {
+     sendEmail(email: string, subject: string, body: string, cc: string): Promise<any> {
       return new Promise((resolve, reject) => {
         google.script.run
-          .withSuccessHandler((result: void) => resolve(result))
+          .withSuccessHandler((result: any) => resolve(result))
           .withFailureHandler((error: any) => reject(error))
           .sendEmail(email, subject, body, cc);
       });

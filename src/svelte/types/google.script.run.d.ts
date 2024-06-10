@@ -5,6 +5,12 @@ declare namespace google.script {
       withSuccessHandler(callback: (value: any, object?: any) => void): this;
       withUserObject(object: Object): this;
       getActiveUserEmail(): void;
+  getOUs(): void;
+  getDepartments(): void;
+  getOrganizations(): void;
+  getTitles(): void;
+  createUser(user: any): void;
+  updateUser(user: any): void;
   getEmailConfig(): void;
   addReaderToCalendars(email: string, calendarIds: string[]): void;
   addWriterToCalendars(email: string, calendarIds: string[]): void;
@@ -15,7 +21,8 @@ declare namespace google.script {
   getCalendarList(): void;
   getGroupList(): void;
   lookupAccount(name: string): void;
-  getGroups(userEmail: any): void
+  getGroups(userEmail: any): void;
+  sendEmail(email: string, subject: string, body: string, cc: string): void
   }
   const run : GoogleScriptRun;
 

@@ -90,3 +90,30 @@ export function getEmailConfig(): EmailSection[] {
   }
   return sections;
 }
+
+export function getDepartments(): string[] {
+  let sheet =
+    SpreadsheetApp.openByUrl(CONFIG_SHEET_URL).getSheetByName("Departments");
+  let data = sheet.getDataRange().getValues();
+  return data.map((r) => r[0]).filter((v) => v);
+}
+
+export function getOrganizations(): string[] {
+  let sheet =
+    SpreadsheetApp.openByUrl(CONFIG_SHEET_URL).getSheetByName("Organizations");
+  let data = sheet.getDataRange().getValues();
+  return data.map((r) => r[0]).filter((v) => v);
+}
+
+export function getOUs(): string[] {
+  let sheet = SpreadsheetApp.openByUrl(CONFIG_SHEET_URL).getSheetByName("OUs");
+  let data = sheet.getDataRange().getValues();
+  return data.map((r) => r[0]).filter((v) => v);
+}
+
+export function getTitles(): string[] {
+  let sheet =
+    SpreadsheetApp.openByUrl(CONFIG_SHEET_URL).getSheetByName("Titles");
+  let data = sheet.getDataRange().getValues();
+  return data.map((r) => r[0]).filter((v) => v);
+}

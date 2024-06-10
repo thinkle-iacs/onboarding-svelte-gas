@@ -1,4 +1,6 @@
 <script lang="ts">
+  import NewUserForm from "./NewUserForm.svelte";
+
   import EmailSender from "./EmailSender.svelte";
 
   import CalendarsForUser from "./CalendarsForUser.svelte";
@@ -23,6 +25,14 @@
   let contextString = `<?= context ?>`;
   let context = parseContext(contextString);
   let username: string;
+
+  let lookingUpUser = false;
+
+  let validUser: null | GoogleAppsScript.AdminDirectory.User;
+  let sheetUrl: string = "";
+  let error = null;
+  let authorized = false;
+
   console.log("Got context string", contextString);
   console.log("parsed:", context);
   if (context.params) {
@@ -30,14 +40,11 @@
     if (context.params.find((p) => p[0] == "u")) {
       let usernameParam = context.params.find((p) => p[0] == "u");
       username = usernameParam.split("=")[1];
+      if (username) {
+        lookupUser();
+      }
     }
   }
-  let lookingUpUser = false;
-
-  let validUser: null | GoogleAppsScript.AdminDirectory.User;
-  let sheetUrl: string = "";
-  let error = null;
-  let authorized = false;
   onMount(async () => {
     authorized = await GoogleAppsScript.isAuthorized();
     console.log("Got auth:", authorized);
@@ -110,6 +117,12 @@
       <Busy></Busy>
     {/if}
     <Error {error}></Error>
+    {#if !validUser && !lookingUpUser}
+      <h2>Create User</h2>
+      <p>No valid user found with name {username}</p>
+      <NewUserForm {username} onUserCreated={(u) => (validUser = u)}
+      ></NewUserForm>
+    {/if}
     {#if validUser}
       <div class="tabs">
         <button

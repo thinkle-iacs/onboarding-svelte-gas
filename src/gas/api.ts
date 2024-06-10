@@ -3,6 +3,9 @@ google.script.run here -- this will allow our type
 definition magic to work, so in your svelte side code
 you get clean autocomplete for google.script.run */
 
+export { getOUs, getDepartments, getOrganizations, getTitles } from "./config";
+export { createUser, updateUser } from "./userManagement";
+
 export { getEmailConfig } from "./config";
 
 export {
