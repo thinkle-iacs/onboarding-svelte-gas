@@ -4,19 +4,19 @@ const APPNAME = `Onboard App`;
 import { getAddOnEnvironment } from "./addOn";
 
 export function doGet(e) {
+  console.log("doGet called iwth event: ", e);
   let template = HtmlService.createTemplateFromFile("index");
 
   // Extract parameters from the `e` object and format them as a single string
   let params = Object.keys(e.parameter)
     .map((key) => `${key}=${e.parameter[key]}`)
     .join(".");
-
+  console.log("doGet called w/ params ", params);
   // Construct the context string
-  let context = `${getAddOnEnvironment()}.dialog.${params}`;
+  let context = `${getAddOnEnvironment()}.dialog.mode.${params}`;
 
   // Pass the context string to the template
   template.context = context;
-
   // Check for the 'usethesource' parameter
   if (e.parameter.usethesource) {
     let htmlOutput = template.evaluate();
