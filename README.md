@@ -1,4 +1,22 @@
-# Google Apps Script + Svelte
+# Onboarding Google Apps Script
+
+This is a svelte-based front-end for handling a bunch of user tasks with google apps script.
+
+Most of this *could* be done w/ the admin API, but I want to give administrators a slightly more curated experience w/ e.g. a pick-list of groups to add users to based on their position at the school, and a picklist of calendars to share, etc.
+
+This is meant for "onboarding" so the basic workflow is:
+
+(1) Create or edit account
+(2) adjust group membership
+(3) invite to calendars
+(4) Generate a welcome email.
+\
+TODO
+  > Support Creating accounts (not just looking them up)
+  > Support editing account details
+
+
+## Google Apps Script + Svelte Starter README
 
 I love Google Apps Script for whipping together projects for our Google Apps School, and I love svelte development in Visual Studio, but before now, I haven't been able to  bring them together. This repo will give me a recipe for fixing that!
 
