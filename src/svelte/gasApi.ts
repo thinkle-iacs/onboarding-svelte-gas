@@ -10,6 +10,33 @@ export const GoogleAppsScript = {
       });
     },
 
+     getEmailConfig(): Promise<import("../types").EmailSection[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: import("../types").EmailSection[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .getEmailConfig();
+      });
+    },
+
+     addReaderToCalendars(email: string, calendarIds: string[]): Promise<{ email: string; calendarId: string; success: boolean; }[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: { email: string; calendarId: string; success: boolean; }[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .addReaderToCalendars(email, calendarIds);
+      });
+    },
+
+     addWriterToCalendars(email: string, calendarIds: string[]): Promise<{ email: string; calendarId: string; success: boolean; }[]> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: { email: string; calendarId: string; success: boolean; }[]) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .addWriterToCalendars(email, calendarIds);
+      });
+    },
+
      isAuthorized(): Promise<boolean> {
       return new Promise((resolve, reject) => {
         google.script.run
@@ -19,19 +46,19 @@ export const GoogleAppsScript = {
       });
     },
 
-     addToGroups(userEmail: string, groupEmails: string[]): Promise<GroupChangeResult[]> {
+     addToGroups(userEmail: string, groupEmails: string[]): Promise<import("../types").GroupChangeResult[]> {
       return new Promise((resolve, reject) => {
         google.script.run
-          .withSuccessHandler((result: GroupChangeResult[]) => resolve(result))
+          .withSuccessHandler((result: import("../types").GroupChangeResult[]) => resolve(result))
           .withFailureHandler((error: any) => reject(error))
           .addToGroups(userEmail, groupEmails);
       });
     },
 
-     removeFromGroups(userEmail: string, groupEmails: string[]): Promise<GroupChangeResult[]> {
+     removeFromGroups(userEmail: string, groupEmails: string[]): Promise<import("../types").GroupChangeResult[]> {
       return new Promise((resolve, reject) => {
         google.script.run
-          .withSuccessHandler((result: GroupChangeResult[]) => resolve(result))
+          .withSuccessHandler((result: import("../types").GroupChangeResult[]) => resolve(result))
           .withFailureHandler((error: any) => reject(error))
           .removeFromGroups(userEmail, groupEmails);
       });
@@ -79,6 +106,15 @@ export const GoogleAppsScript = {
           .withSuccessHandler((result: any[]) => resolve(result))
           .withFailureHandler((error: any) => reject(error))
           .getGroups(userEmail);
+      });
+    },
+
+     sendEmail(email: string, subject: string, body: string, cc: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((result: void) => resolve(result))
+          .withFailureHandler((error: any) => reject(error))
+          .sendEmail(email, subject, body, cc);
       });
     }
 }

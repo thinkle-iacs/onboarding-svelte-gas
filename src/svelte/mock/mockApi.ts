@@ -258,7 +258,9 @@ export function getCalendarList(): CalendarInfo[] {
 }
 
 export function getConfigSheetUrl(): string {
-  return "hello";
+  const url =
+    "https://docs.google.com/spreadsheets/d/1_BZVWBemmXg1eWo-3yhvXm1Dgyn5fq1QFqUqiX9c2O8/edit#gid=2033833256";
+  return url;
 }
 
 export function addToGroups(
@@ -291,4 +293,65 @@ export function removeFromGroups(
 
 export function isAuthorized(): boolean {
   return true;
+}
+
+export function addReaderToCalendars(
+  email: string,
+  calendarIds: string[]
+): { email: string; calendarId: string; success: boolean }[] {
+  return calendarIds.map((c) => ({ email, calendarId: c, success: true }));
+}
+
+export function addWriterToCalendars(
+  email: string,
+  calendarIds: string[]
+): { email: string; calendarId: string; success: boolean }[] {
+  return calendarIds.map((c) => ({ email, calendarId: c, success: true }));
+}
+
+export function getEmailConfig(): import("/Users/thinkle/Projects/onboarding-svelte-gas/src/types").EmailSection[] {
+  return [
+    {
+      header: "Body",
+      html: "<p>Welcome to IACS!</p>",
+      default: true,
+    },
+    {
+      header: "Groups",
+      html: "<p>You have been added a to a number of google groups, which will get you some group emails and also get you access to shared google drives where we organize much of our work. You should be able to find these in Google Drive.</p>",
+      default: true,
+    },
+    {
+      header: "Calendars",
+      html: "<p>You should see some calendar invites in your inbox. Please accept these invitations -- you'll find you'll need access to these calendars soon!</p>",
+      default: true,
+    },
+    {
+      header: "Computer Survey",
+      html: '<p>We allocate new computers to all new teachers, and do our best to accommodate teacher preferences for Mac, Windows or Chromebooks. Please go ahead and complete our <a href="https://docs.google.com/a/innovationcharter.org/forms/d/1JyPxloytyQbBbTgQdTNIx8A1i2WAiFJTrvIrUchqz1k/viewform">New Staff Computer Survey</a> to let us know your preferences.</p>',
+      default: false,
+    },
+    {
+      header: "Footer",
+      html: '<p>If you have any questions on things technological, please feel free to reach out to me (<a href="mailto:thinkle@innovationcharter.org">Tom Hinkle</a>). Our general tech support email is <a href="mailto:support@innovationcharter.org">support@innovationcharter.org</a> and will also include our IT Manager and all-around tech wizard Nick Troy. You can also start to get to know our tech environment by browsing our support webpage at <a href="https://support.innovationcharter.org">support.innovationcharter.org</a></p>',
+      default: true,
+    },
+    {
+      header: "Signature",
+      html: "<p>Tom Hinkle<br>Director of Technology<br>Innovation Academy Charter School</p>",
+      default: true,
+    },
+    {
+      header: "Subject",
+      html: "Welcome to IACS",
+      default: true,
+    },
+  ];
+}
+export function sendEmail() {
+  return {
+    name: "what",
+    big: "object",
+    lots: "of stuff",
+  };
 }

@@ -5,6 +5,9 @@ declare namespace google.script {
       withSuccessHandler(callback: (value: any, object?: any) => void): this;
       withUserObject(object: Object): this;
       getActiveUserEmail(): void;
+  getEmailConfig(): void;
+  addReaderToCalendars(email: string, calendarIds: string[]): void;
+  addWriterToCalendars(email: string, calendarIds: string[]): void;
   isAuthorized(): void;
   addToGroups(userEmail: string, groupEmails: string[]): void;
   removeFromGroups(userEmail: string, groupEmails: string[]): void;
