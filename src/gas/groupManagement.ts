@@ -1,5 +1,6 @@
 import type { GroupChangeResult } from "../types";
 import { isAuthorized } from "./config";
+import { logInfo } from "./logging";
 
 export function addToGroups(
   userEmail: string,
@@ -25,6 +26,13 @@ export function addToGroups(
         },
         groupEmail
       );
+      logInfo(
+        "Add to Groups",
+        "SUCCESS" + JSON.stringify(result),
+        userEmail,
+        groupEmails.join(", ")
+      );
+
       return {
         userEmail,
         groupEmail,
@@ -32,6 +40,12 @@ export function addToGroups(
         change: "add",
       } as GroupChangeResult;
     } catch (err) {
+      logInfo(
+        "Add to Groups",
+        "ERROR: " + JSON.stringify(err),
+        userEmail,
+        groupEmails.join(", ")
+      );
       return {
         userEmail,
         groupEmail,
@@ -41,6 +55,7 @@ export function addToGroups(
       } as GroupChangeResult;
     }
   });
+
   return results;
 }
 
