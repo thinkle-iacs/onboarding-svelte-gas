@@ -91,3 +91,45 @@ button.small {
   display: inline-grid;
   place-content: center;
 }
+
+.tabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 8px;
+  align-items: flex-end;
+}
+.tabs > button,
+.tabs > a {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background-color: #cacaca;
+  color: #222;
+  cursor: pointer;
+  transition: background-color 300ms;
+  height: auto;
+}
+
+.tabs > .active {
+  filter: brightness(0.8) contrast(1.2);
+}
+.hidden {
+  display: none;
+}
+.area {
+  border: 1px solid #ccc;
+  padding: 1em;
+  margin-top: 1em;
+}
+
+.area h3 {
+  margin: 0;
+}
+.area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: start;
+  gap: 8px;
+}
