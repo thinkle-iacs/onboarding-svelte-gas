@@ -10,10 +10,11 @@ This is meant for "onboarding" so the basic workflow is:
 (2) adjust group membership
 (3) invite to calendars
 (4) Generate a welcome email.
-\
+
 TODO
-  > Support Creating accounts (not just looking them up)
-  > Support editing account details
+
+  * Support Creating accounts (not just looking them up) [DONE!]
+  * Support editing account details
 
 
 ## Google Apps Script + Svelte Starter README
